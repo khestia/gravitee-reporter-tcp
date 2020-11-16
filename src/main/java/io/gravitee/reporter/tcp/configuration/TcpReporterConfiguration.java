@@ -42,6 +42,12 @@ public class TcpReporterConfiguration {
     @Value("${reporters.tcp.retryTimeout:5000}")
     private long retryTimeout;
 
+    @Value("${reporters.tcp.reconnectAttempts:10}")
+    private int reconnectAttempts;
+
+    @Value("${reporters.tcp.reconnectInterval:500}")
+    private long reconnectInterval;
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -64,5 +70,13 @@ public class TcpReporterConfiguration {
 
     public long getRetryTimeout() {
         return retryTimeout;
+    }
+
+    public int getReconnectAttempts() {
+        return reconnectAttempts;
+    }
+
+    public long getReconnectInterval() {
+        return reconnectInterval;
     }
 }

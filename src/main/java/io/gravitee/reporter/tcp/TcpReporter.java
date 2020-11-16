@@ -32,7 +32,6 @@ import io.vertx.core.net.NetSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,9 +78,6 @@ public final class TcpReporter extends AbstractService implements Reporter {
 
     private final static byte[] END_OF_LINE = new byte[]{CR, LF};
 
-    @Value("${reporters.tcp.enabled:false}")
-    private boolean enabled;
-
     @Override
     public void report(Reportable reportable) {
         if (configuration.isEnabled()) {
@@ -122,8 +118,8 @@ public final class TcpReporter extends AbstractService implements Reporter {
             netClient = vertx
                     .createNetClient(new NetClientOptions()
                             .setConnectTimeout(configuration.getConnectTimeout())
-                            .setReconnectAttempts(10)
-                            .setReconnectInterval(500));
+                            .setReconnectAttempts(configuration.getReconnectAttempts())
+                            .setReconnectInterval(configuration.getReconnectInterval()));
 
             connect();
         }
