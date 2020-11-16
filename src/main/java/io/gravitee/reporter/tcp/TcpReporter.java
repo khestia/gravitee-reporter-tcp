@@ -32,6 +32,7 @@ import io.vertx.core.net.NetSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,16 +79,21 @@ public final class TcpReporter extends AbstractService implements Reporter {
 
     private final static byte[] END_OF_LINE = new byte[]{CR, LF};
 
+    @Value("${reporters.tcp.enabled:false}")
+    private boolean enabled;
+
     @Override
     public void report(Reportable reportable) {
-        if (netSocket != null) {
-            final Buffer data = formatters.get(reportable.getClass()).format(reportable);
+        if (configuration.isEnabled()) {
+            if (netSocket != null) {
+                final Buffer data = formatters.get(reportable.getClass()).format(reportable);
 
-            if (data != null) {
-                netSocket.write(data.appendBytes(END_OF_LINE));
+                if (data != null) {
+                    netSocket.write(data.appendBytes(END_OF_LINE));
+                }
+            } else {
+                logger.warn("TCP reporter not connected, skipping data...");
             }
-        } else {
-            logger.warn("TCP reporter not connected, skipping data...");
         }
     }
 
