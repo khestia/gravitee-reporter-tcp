@@ -17,6 +17,8 @@ package io.gravitee.reporter.tcp.formatter.csv;
 
 import io.gravitee.reporter.api.http.Metrics;
 import io.vertx.core.buffer.Buffer;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -25,6 +27,8 @@ import io.vertx.core.buffer.Buffer;
 public final class MetricsFormatter extends SingleValueFormatter<Metrics> {
 
   public Buffer format0(Metrics metrics) {
+    final Map<String, String> customMetrics = metrics.getCustomMetrics();
+
     final Buffer buffer = Buffer.buffer();
 
     appendString(buffer, metrics.getTransactionId());
@@ -62,8 +66,17 @@ public final class MetricsFormatter extends SingleValueFormatter<Metrics> {
     appendString(
       buffer,
       metrics.getSecurityToken() != null ? metrics.getApi() : null,
-      true
+      customMetrics.isEmpty()
     );
+
+    if (!customMetrics.isEmpty()) {
+      for (
+        Iterator<String> i = customMetrics.keySet().iterator();
+        i.hasNext();
+      ) {
+        appendString(buffer, customMetrics.get(i.next()), true, !i.hasNext());
+      }
+    }
 
     return buffer;
   }
