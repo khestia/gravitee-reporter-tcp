@@ -27,40 +27,40 @@ import io.vertx.core.buffer.Buffer;
  */
 public class LogFormatter extends SingleValueFormatter<Log> {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper = new ObjectMapper();
 
-    {
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+  {
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+  }
+
+  @Override
+  public Buffer format0(Log log) {
+    final Buffer buffer = Buffer.buffer();
+
+    appendString(buffer, log.getRequestId());
+    appendString(buffer, log.getApi());
+
+    try {
+      appendString(buffer, mapper.writeValueAsString(log.getClientRequest()));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    try {
+      appendString(buffer, mapper.writeValueAsString(log.getClientResponse()));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    try {
+      appendString(buffer, mapper.writeValueAsString(log.getProxyRequest()));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    try {
+      appendString(buffer, mapper.writeValueAsString(log.getProxyResponse()));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
     }
 
-    @Override
-    public Buffer format0(Log log) {
-        final Buffer buffer = Buffer.buffer();
-
-        appendString(buffer, log.getRequestId());
-        appendString(buffer, log.getApi());
-
-        try {
-            appendString(buffer, mapper.writeValueAsString(log.getClientRequest()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        try {
-            appendString(buffer, mapper.writeValueAsString(log.getClientResponse()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        try {
-            appendString(buffer, mapper.writeValueAsString(log.getProxyRequest()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        try {
-            appendString(buffer, mapper.writeValueAsString(log.getProxyResponse()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return buffer;
-    }
+    return buffer;
+  }
 }

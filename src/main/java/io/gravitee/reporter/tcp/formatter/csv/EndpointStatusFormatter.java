@@ -21,63 +21,63 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gravitee.reporter.api.health.EndpointStatus;
 import io.gravitee.reporter.api.health.Step;
 import io.vertx.core.buffer.Buffer;
-
 import java.util.List;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
-public class EndpointStatusFormatter extends SingleValueFormatter<EndpointStatus> {
+public class EndpointStatusFormatter
+  extends SingleValueFormatter<EndpointStatus> {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper = new ObjectMapper();
 
-    {
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+  {
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+  }
+
+  @Override
+  public Buffer format0(EndpointStatus status) {
+    final Buffer buffer = Buffer.buffer();
+
+    appendString(buffer, status.getId());
+    appendString(buffer, status.getApi());
+    appendString(buffer, status.getEndpoint());
+    appendInt(buffer, status.getState());
+    appendBoolean(buffer, status.isAvailable());
+    appendBoolean(buffer, status.isSuccess());
+    appendBoolean(buffer, status.isTransition());
+    appendLong(buffer, status.getResponseTime());
+    append(buffer, status.getSteps());
+
+    return buffer;
+  }
+
+  private void append(Buffer buffer, List<Step> steps) {
+    if (steps != null && !steps.isEmpty()) {
+      Step last = steps.get(0);
+      appendString(buffer, last.getName());
+      appendBoolean(buffer, last.isSuccess());
+      appendLong(buffer, last.getResponseTime());
+      appendString(buffer, last.getMessage(), true);
+
+      try {
+        appendString(buffer, mapper.writeValueAsString(last.getRequest()));
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
+      try {
+        appendString(buffer, mapper.writeValueAsString(last.getResponse()));
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
+    } else {
+      appendEmpty(buffer);
+      appendEmpty(buffer);
+      appendEmpty(buffer);
+      appendEmpty(buffer);
+      appendEmpty(buffer);
+      appendEmpty(buffer);
     }
-
-    @Override
-    public Buffer format0(EndpointStatus status) {
-        final Buffer buffer = Buffer.buffer();
-
-        appendString(buffer, status.getId());
-        appendString(buffer, status.getApi());
-        appendString(buffer, status.getEndpoint());
-        appendInt(buffer, status.getState());
-        appendBoolean(buffer, status.isAvailable());
-        appendBoolean(buffer, status.isSuccess());
-        appendBoolean(buffer, status.isTransition());
-        appendLong(buffer, status.getResponseTime());
-        append(buffer, status.getSteps());
-
-        return buffer;
-    }
-
-    private void append(Buffer buffer, List<Step> steps) {
-        if (steps != null && !steps.isEmpty()) {
-            Step last = steps.get(0);
-            appendString(buffer, last.getName());
-            appendBoolean(buffer, last.isSuccess());
-            appendLong(buffer,last.getResponseTime());
-            appendString(buffer, last.getMessage(), true);
-
-            try {
-                appendString(buffer, mapper.writeValueAsString(last.getRequest()));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            try {
-                appendString(buffer, mapper.writeValueAsString(last.getResponse()));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        } else {
-            appendEmpty(buffer);
-            appendEmpty(buffer);
-            appendEmpty(buffer);
-            appendEmpty(buffer);
-            appendEmpty(buffer);
-            appendEmpty(buffer);
-        }
-    }
+  }
 }

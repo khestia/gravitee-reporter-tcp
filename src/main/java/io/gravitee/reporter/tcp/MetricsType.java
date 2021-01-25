@@ -26,25 +26,24 @@ import io.gravitee.reporter.api.monitor.Monitor;
  * @author GraviteeSource Team
  */
 public enum MetricsType {
+  REQUEST("request", Metrics.class),
+  NODE("node", Monitor.class),
+  HEALTH_CHECK("health-check", EndpointStatus.class),
+  REQUEST_LOG("log", Log.class);
 
-    REQUEST("request", Metrics.class),
-    NODE("node", Monitor.class),
-    HEALTH_CHECK("health-check", EndpointStatus.class),
-    REQUEST_LOG("log", Log.class);
+  private final String type;
+  private final Class<? extends Reportable> clazz;
 
-    private final String type;
-    private final Class<? extends Reportable> clazz;
+  MetricsType(String type, Class<? extends Reportable> clazz) {
+    this.type = type;
+    this.clazz = clazz;
+  }
 
-    MetricsType(String type, Class<? extends Reportable> clazz) {
-        this.type = type;
-        this.clazz = clazz;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public String getType() {
-        return type;
-    }
-
-    public Class<? extends Reportable> getClazz() {
-        return clazz;
-    }
+  public Class<? extends Reportable> getClazz() {
+    return clazz;
+  }
 }

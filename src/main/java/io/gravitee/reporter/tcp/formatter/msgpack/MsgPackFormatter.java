@@ -26,17 +26,20 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
-public class MsgPackFormatter<T extends Reportable> extends AbstractFormatter<T> {
+public class MsgPackFormatter<T extends Reportable>
+  extends AbstractFormatter<T> {
 
-    private final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
+  private final ObjectMapper mapper = new ObjectMapper(
+    new MessagePackFactory()
+  );
 
-    @Override
-    public Buffer format0(T data) {
-        try {
-            return Buffer.buffer(mapper.writeValueAsBytes(data));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
+  @Override
+  public Buffer format0(T data) {
+    try {
+      return Buffer.buffer(mapper.writeValueAsBytes(data));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      return null;
     }
+  }
 }

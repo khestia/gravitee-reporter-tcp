@@ -29,22 +29,22 @@ import io.vertx.core.buffer.Buffer;
  */
 public class CsvFormatter<T extends Reportable> implements Formatter<T> {
 
-    private final static EndpointStatusFormatter ENDPOINT_STATUS_FORMATTER = new EndpointStatusFormatter();
-    private final static LogFormatter LOG_FORMATTER = new LogFormatter();
-    private final static MetricsFormatter METRICS_FORMATTER = new MetricsFormatter();
-    private final static MonitorFormatter MONITOR_FORMATTER = new MonitorFormatter();
+  private static final EndpointStatusFormatter ENDPOINT_STATUS_FORMATTER = new EndpointStatusFormatter();
+  private static final LogFormatter LOG_FORMATTER = new LogFormatter();
+  private static final MetricsFormatter METRICS_FORMATTER = new MetricsFormatter();
+  private static final MonitorFormatter MONITOR_FORMATTER = new MonitorFormatter();
 
-    @Override
-    public Buffer format(T data) {
-        if (data instanceof Metrics) {
-            return METRICS_FORMATTER.format((Metrics) data);
-        } else if (data instanceof Log) {
-            return LOG_FORMATTER.format((Log) data);
-        } else if (data instanceof EndpointStatus) {
-            return ENDPOINT_STATUS_FORMATTER.format((EndpointStatus) data);
-        } else if (data instanceof Monitor) {
-            return MONITOR_FORMATTER.format((Monitor) data);
-        }
-        return null;
+  @Override
+  public Buffer format(T data) {
+    if (data instanceof Metrics) {
+      return METRICS_FORMATTER.format((Metrics) data);
+    } else if (data instanceof Log) {
+      return LOG_FORMATTER.format((Log) data);
+    } else if (data instanceof EndpointStatus) {
+      return ENDPOINT_STATUS_FORMATTER.format((EndpointStatus) data);
+    } else if (data instanceof Monitor) {
+      return MONITOR_FORMATTER.format((Monitor) data);
     }
+    return null;
+  }
 }

@@ -20,19 +20,18 @@ package io.gravitee.reporter.tcp.formatter.elasticsearch;
  * @author GraviteeSource Team
  */
 public enum Type {
+  REQUEST("request"),
+  HEALTH_CHECK("health"),
+  LOG("log"),
+  MONITOR("monitor");
 
-    REQUEST("request"),
-    HEALTH_CHECK("health"),
-    LOG("log"),
-    MONITOR("monitor");
+  private String type;
 
-    private String type;
+  Type(final String type) {
+    this.type = type;
+  }
 
-    Type(final String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
+  public String getType() {
+    return type;
+  }
 }

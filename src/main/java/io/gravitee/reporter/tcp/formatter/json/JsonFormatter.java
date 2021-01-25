@@ -28,19 +28,19 @@ import io.vertx.core.buffer.Buffer;
  */
 public class JsonFormatter<T extends Reportable> extends AbstractFormatter<T> {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper = new ObjectMapper();
 
-    {
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    }
+  {
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+  }
 
-    @Override
-    public Buffer format0(T data) {
-        try {
-            return Buffer.buffer(mapper.writeValueAsBytes(data));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
+  @Override
+  public Buffer format0(T data) {
+    try {
+      return Buffer.buffer(mapper.writeValueAsBytes(data));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      return null;
     }
+  }
 }

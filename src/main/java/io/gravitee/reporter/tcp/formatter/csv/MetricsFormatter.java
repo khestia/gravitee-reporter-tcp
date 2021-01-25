@@ -24,38 +24,47 @@ import io.vertx.core.buffer.Buffer;
  */
 public final class MetricsFormatter extends SingleValueFormatter<Metrics> {
 
-    public Buffer format0(Metrics metrics) {
-        final Buffer buffer = Buffer.buffer();
-        
-        appendString(buffer, metrics.getTransactionId());
-        appendString(buffer, metrics.getRequestId());
-        appendLong(buffer, metrics.timestamp().toEpochMilli());
-        appendString(buffer, metrics.getRemoteAddress());
-        appendString(buffer, metrics.getLocalAddress());
-        appendString(buffer, metrics.getApi());
-        appendString(buffer, metrics.getApplication());
-        appendString(buffer, metrics.getPlan());
-        appendString(buffer, metrics.getSubscription());
-        appendString(buffer, metrics.getUser());
-        appendString(buffer, metrics.getTenant());
-        appendString(buffer, metrics.getUri());
-        appendString(buffer, metrics.getPath());
-        appendString(buffer, metrics.getMappedPath());
-        appendString(buffer, metrics.getHttpMethod().name());
-        appendInt(buffer, metrics.getStatus());
-        appendString(buffer, metrics.getEndpoint());
-        appendString(buffer, metrics.getErrorKey());
-        appendString(buffer, metrics.getMessage(), true, false);
-        appendString(buffer, metrics.getUserAgent(), true, false);
-        appendString(buffer, metrics.getHost());
-        appendLong(buffer, metrics.getRequestContentLength());
-        appendLong(buffer, metrics.getResponseContentLength());
-        appendLong(buffer, metrics.getApiResponseTimeMs());
-        appendLong(buffer, metrics.getProxyResponseTimeMs());
-        appendLong(buffer, metrics.getProxyLatencyMs());
-        appendString(buffer, metrics.getSecurityType() != null ? metrics.getSecurityType().name() : null);
-        appendString(buffer, metrics.getSecurityToken() != null ? metrics.getApi() : null, true);
+  public Buffer format0(Metrics metrics) {
+    final Buffer buffer = Buffer.buffer();
 
-        return buffer;
-    }
+    appendString(buffer, metrics.getTransactionId());
+    appendString(buffer, metrics.getRequestId());
+    appendLong(buffer, metrics.timestamp().toEpochMilli());
+    appendString(buffer, metrics.getRemoteAddress());
+    appendString(buffer, metrics.getLocalAddress());
+    appendString(buffer, metrics.getApi());
+    appendString(buffer, metrics.getApplication());
+    appendString(buffer, metrics.getPlan());
+    appendString(buffer, metrics.getSubscription());
+    appendString(buffer, metrics.getUser());
+    appendString(buffer, metrics.getTenant());
+    appendString(buffer, metrics.getUri());
+    appendString(buffer, metrics.getPath());
+    appendString(buffer, metrics.getMappedPath());
+    appendString(buffer, metrics.getHttpMethod().name());
+    appendInt(buffer, metrics.getStatus());
+    appendString(buffer, metrics.getEndpoint());
+    appendString(buffer, metrics.getErrorKey());
+    appendString(buffer, metrics.getMessage(), true, false);
+    appendString(buffer, metrics.getUserAgent(), true, false);
+    appendString(buffer, metrics.getHost());
+    appendLong(buffer, metrics.getRequestContentLength());
+    appendLong(buffer, metrics.getResponseContentLength());
+    appendLong(buffer, metrics.getApiResponseTimeMs());
+    appendLong(buffer, metrics.getProxyResponseTimeMs());
+    appendLong(buffer, metrics.getProxyLatencyMs());
+    appendString(
+      buffer,
+      metrics.getSecurityType() != null
+        ? metrics.getSecurityType().name()
+        : null
+    );
+    appendString(
+      buffer,
+      metrics.getSecurityToken() != null ? metrics.getApi() : null,
+      true
+    );
+
+    return buffer;
+  }
 }

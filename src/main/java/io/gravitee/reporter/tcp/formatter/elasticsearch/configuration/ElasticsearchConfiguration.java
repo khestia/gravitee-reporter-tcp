@@ -15,5 +15,4 @@
  */
 package io.gravitee.reporter.tcp.formatter.elasticsearch.configuration;
 
-public class ElasticsearchConfiguration {
-}
+public class ElasticsearchConfiguration {}

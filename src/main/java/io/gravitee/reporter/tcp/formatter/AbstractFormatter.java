@@ -24,19 +24,24 @@ import org.apache.commons.validator.routines.InetAddressValidator;
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
-public abstract class AbstractFormatter<T extends Reportable> implements Formatter<T> {
+public abstract class AbstractFormatter<T extends Reportable>
+  implements Formatter<T> {
 
-    @Override
-    public Buffer format(T data) {
-        if (data instanceof Metrics) {
-            // Check remote address format
-            if (!InetAddressValidator.getInstance().isValid(((Metrics) data).getRemoteAddress())) {
-                ((Metrics) data).setRemoteAddress("0.0.0.0");
-            }
-        }
-
-        return format0(data);
+  @Override
+  public Buffer format(T data) {
+    if (data instanceof Metrics) {
+      // Check remote address format
+      if (
+        !InetAddressValidator
+          .getInstance()
+          .isValid(((Metrics) data).getRemoteAddress())
+      ) {
+        ((Metrics) data).setRemoteAddress("0.0.0.0");
+      }
     }
 
-    protected abstract Buffer format0(T data);
+    return format0(data);
+  }
+
+  protected abstract Buffer format0(T data);
 }

@@ -27,13 +27,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PluginConfiguration {
 
-    @Bean
-    public TcpReporterConfiguration tcpReporterConfiguration(){
-        return new TcpReporterConfiguration();
-    }
+  @Bean
+  public TcpReporterConfiguration tcpReporterConfiguration() {
+    return new TcpReporterConfiguration();
+  }
 
-    @Bean
-    public FreeMarkerComponent freeMarkerComponent() {
-        return new FreeMarkerComponent();
-    }
+  @Bean
+  public FreeMarkerComponent freeMarkerComponent() {
+    return new FreeMarkerComponent();
+  }
 }

@@ -24,59 +24,61 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class TcpReporterConfiguration {
 
-    @Value("${reporters.tcp.enabled:true}")
-    private boolean enabled;
+  @Value("${reporters.tcp.enabled:true}")
+  private boolean enabled;
 
-    @Value("${reporters.tcp.output:json}")
-    private String outputType;
+  @Value("${reporters.tcp.output:json}")
+  private String outputType;
 
-    @Value("${reporters.tcp.host:localhost}")
-    private String host;
+  @Value("${reporters.tcp.host:localhost}")
+  private String host;
 
-    @Value("${reporters.tcp.port:8123}")
-    private int port;
+  @Value("${reporters.tcp.port:8123}")
+  private int port;
 
-    @Value("${reporters.tcp.connectTimeout:10000}")
-    private int connectTimeout;
+  @Value("${reporters.tcp.connectTimeout:10000}")
+  private int connectTimeout;
 
-    @Value("${reporters.tcp.retryTimeout:5000}")
-    private long retryTimeout;
+  @Value("${reporters.tcp.retryTimeout:5000}")
+  private long retryTimeout;
 
-    @Value("${reporters.tcp.reconnectAttempts:10}")
-    private int reconnectAttempts;
+  @Value("${reporters.tcp.reconnectAttempts:10}")
+  private int reconnectAttempts;
 
-    @Value("${reporters.tcp.reconnectInterval:500}")
-    private long reconnectInterval;
+  @Value("${reporters.tcp.reconnectInterval:500}")
+  private long reconnectInterval;
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+  public boolean isEnabled() {
+    return enabled;
+  }
 
-    public Type getOutputType() {
-        return outputType == null ? Type.JSON : Type.valueOf(outputType.toUpperCase());
-    }
+  public Type getOutputType() {
+    return outputType == null
+      ? Type.JSON
+      : Type.valueOf(outputType.toUpperCase());
+  }
 
-    public String getHost() {
-        return host;
-    }
+  public String getHost() {
+    return host;
+  }
 
-    public int getPort() {
-        return port;
-    }
+  public int getPort() {
+    return port;
+  }
 
-    public int getConnectTimeout() {
-        return connectTimeout;
-    }
+  public int getConnectTimeout() {
+    return connectTimeout;
+  }
 
-    public long getRetryTimeout() {
-        return retryTimeout;
-    }
+  public long getRetryTimeout() {
+    return retryTimeout;
+  }
 
-    public int getReconnectAttempts() {
-        return reconnectAttempts;
-    }
+  public int getReconnectAttempts() {
+    return reconnectAttempts;
+  }
 
-    public long getReconnectInterval() {
-        return reconnectInterval;
-    }
+  public long getReconnectInterval() {
+    return reconnectInterval;
+  }
 }
