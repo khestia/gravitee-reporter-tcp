@@ -39,7 +39,8 @@
         <gravitee-common.version>1.18.0</gravitee-common.version>
         <gravitee-node.version>1.6.6</gravitee-node.version>
 
-        <freemarker.version>2.3.26-incubating</freemarker.version>
+        <freemarker.version>2.3.31</freemarker.version>
+        <jackson-dataformat-msgpack.version>0.8.22</jackson-dataformat-msgpack.version>
         <commons-validator.version>1.6</commons-validator.version>
     </properties>
 
@@ -90,7 +91,7 @@
             <version>${gravitee-gateway-api.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>io.gravitee.reporter</groupId>
             <artifactId>gravitee-reporter-api</artifactId>
@@ -107,12 +108,7 @@
             <groupId>io.gravitee.node</groupId>
             <artifactId>gravitee-node-api</artifactId>
             <version>${gravitee-node.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Freemarker -->
@@ -140,13 +136,19 @@
         <dependency>
             <groupId>org.msgpack</groupId>
             <artifactId>jackson-dataformat-msgpack</artifactId>
-            <version>0.8.20</version>
+            <version>${jackson-dataformat-msgpack.version}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <version>${commons-validator.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring dependencies -->
