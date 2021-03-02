@@ -28,3 +28,11 @@ The configuration is loaded from the common GraviteeIO Gateway configuration fil
 reporters:
   tcp:
 ```
+
+## Test locally
+
+You can deploy the reporter and run the following command in your terminal (assuming you are using the default configuration) to display the GraviteeIO Gateway events:
+
+`nc -4 -k -l -v localhost 8123`
+
+
