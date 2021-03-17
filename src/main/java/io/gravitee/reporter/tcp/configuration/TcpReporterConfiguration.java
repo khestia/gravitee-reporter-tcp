@@ -24,11 +24,11 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class TcpReporterConfiguration {
 
-  @Value("${reporters.tcp.enabled:true}")
-  private boolean enabled;
-
   @Value("${reporters.tcp.output:json}")
   private String outputType;
+
+  @Value("${reporters.tcp.enabled:false}")
+  private boolean enabled;
 
   @Value("${reporters.tcp.host:localhost}")
   private String host;
