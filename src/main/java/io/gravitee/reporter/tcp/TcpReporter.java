@@ -24,6 +24,7 @@ import io.gravitee.reporter.tcp.formatter.FormatterFactory;
 import io.vertx.circuitbreaker.CircuitBreaker;
 import io.vertx.circuitbreaker.CircuitBreakerOptions;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetClient;
@@ -146,7 +147,7 @@ public final class TcpReporter extends AbstractService implements Reporter {
   private void connect() {
     circuitBreaker
       .execute(this::doConnect)
-      .setHandler(
+      .onComplete(
         event -> {
           // The connection has been established
           if (event.succeeded()) {
@@ -179,13 +180,13 @@ public final class TcpReporter extends AbstractService implements Reporter {
       );
   }
 
-  private void doConnect(Future<NetSocket> netSocketFuture) {
+  private void doConnect(Promise<NetSocket> netSocketPromise) {
     netClient.connect(
       configuration.getPort(),
       configuration.getHost(),
       event -> {
         if (event.failed()) {
-          netSocketFuture.fail(event.cause());
+          netSocketPromise.fail(event.cause());
           logger.error(
             "An error occurs while trying to connect TCP reporter to {}:{}",
             configuration.getHost(),
@@ -193,7 +194,7 @@ public final class TcpReporter extends AbstractService implements Reporter {
             event.cause()
           );
         } else {
-          netSocketFuture.complete(event.result());
+          netSocketPromise.complete(event.result());
           logger.info(
             "TCP reporter connected to {}:{}",
             configuration.getHost(),
