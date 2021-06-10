@@ -80,6 +80,13 @@ public final class TcpReporter extends AbstractService implements Reporter {
   private static final byte[] END_OF_LINE = new byte[] { CR, LF };
 
   @Override
+  public boolean canHandle(Reportable reportable) {
+    return (
+      configuration.isEnabled() && formatters.containsKey(reportable.getClass())
+    );
+  }
+
+  @Override
   public void report(Reportable reportable) {
     if (configuration.isEnabled()) {
       if (netSocket != null) {

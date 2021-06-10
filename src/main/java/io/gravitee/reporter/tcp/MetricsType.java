@@ -15,11 +15,11 @@
  */
 package io.gravitee.reporter.tcp;
 
+import io.gravitee.node.api.monitor.Monitor;
 import io.gravitee.reporter.api.Reportable;
 import io.gravitee.reporter.api.health.EndpointStatus;
 import io.gravitee.reporter.api.http.Metrics;
 import io.gravitee.reporter.api.log.Log;
-import io.gravitee.reporter.api.monitor.Monitor;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -27,7 +27,7 @@ import io.gravitee.reporter.api.monitor.Monitor;
  */
 public enum MetricsType {
   REQUEST("request", Metrics.class),
-  NODE("node", Monitor.class),
+  NODE_MONITOR("node", Monitor.class),
   HEALTH_CHECK("health-check", EndpointStatus.class),
   REQUEST_LOG("log", Log.class);
 
