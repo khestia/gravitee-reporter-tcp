@@ -24,6 +24,7 @@ import io.gravitee.reporter.tcp.formatter.FormatterFactory;
 import io.vertx.circuitbreaker.CircuitBreaker;
 import io.vertx.circuitbreaker.CircuitBreakerOptions;
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetClient;
@@ -76,19 +77,24 @@ public final class TcpReporter extends AbstractService implements Reporter {
      */
     private static final char CR = '\r';
 
-    private final static byte[] END_OF_LINE = new byte[]{CR, LF};
+    private final static byte[] END_OF_LINE = new byte[] { CR, LF };
 
     @Override
     public void report(Reportable reportable) {
         if (configuration.isEnabled()) {
-            if (netSocket != null) {
-                final Buffer data = formatters.get(reportable.getClass()).format(reportable);
-
-                if (data != null) {
-                    netSocket.write(data.appendBytes(END_OF_LINE));
-                }
-            } else {
-                logger.warn("TCP reporter not connected, skipping data...");
+            if (netSocket != null && !netSocket.writeQueueFull()) {
+                vertx.executeBlocking((Handler<Future<Buffer>>) event -> {
+                    Buffer buffer = formatters.get(reportable.getClass()).format(reportable);
+                    if (buffer != null) {
+                        event.complete(buffer);
+                    } else {
+                        event.fail("Invalid data");
+                    }
+                }, event -> {
+                    if (event.succeeded() && !netSocket.writeQueueFull()) {
+                        netSocket.write(event.result().appendBytes(END_OF_LINE));
+                    }
+                });
             }
         }
     }
