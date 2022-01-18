@@ -23,7 +23,6 @@ import io.gravitee.reporter.tcp.formatter.Formatter;
 import io.gravitee.reporter.tcp.formatter.FormatterFactory;
 import io.vertx.circuitbreaker.CircuitBreaker;
 import io.vertx.circuitbreaker.CircuitBreakerOptions;
-import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -112,7 +111,8 @@ public final class TcpReporter extends AbstractService implements Reporter {
       // Initialize reporters
       for (MetricsType type : MetricsType.values()) {
         Formatter formatter = FormatterFactory.getFormatter(
-          configuration.getOutputType()
+          configuration.getOutputType(),
+          configuration.getRules(type)
         );
         applicationContext
           .getAutowireCapableBeanFactory()
