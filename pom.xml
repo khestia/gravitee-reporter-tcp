@@ -30,13 +30,13 @@
     <name>Gravitee.io APIM - Reporter - TCP</name>
     <groupId>io.gravitee.reporter</groupId>
     <artifactId>gravitee-reporter-tcp</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.0</version>
 
     <properties>
         <gravitee-bom.version>1.5-SNAPSHOT</gravitee-bom.version>
         <gravitee-gateway-api.version>1.31.0</gravitee-gateway-api.version>
-        <gravitee-reporter-api.version>1.22.0-SNAPSHOT</gravitee-reporter-api.version>
-        <gravitee-common.version>1.24.0-SNAPSHOT</gravitee-common.version>
+        <gravitee-reporter-api.version>1.22.0</gravitee-reporter-api.version>
+        <gravitee-common.version>1.24.0</gravitee-common.version>
         <gravitee-node.version>1.15.1</gravitee-node.version>
 
         <freemarker.version>2.3.31</freemarker.version>
