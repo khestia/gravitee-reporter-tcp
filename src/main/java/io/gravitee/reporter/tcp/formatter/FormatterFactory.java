@@ -27,18 +27,18 @@ import io.gravitee.reporter.tcp.formatter.msgpack.MsgPackFormatter;
  */
 public final class FormatterFactory {
 
-  public static Formatter getFormatter(Type type, Rules rules) {
-    switch (type) {
-      case CSV:
-        return new CsvFormatter();
-      case MESSAGE_PACK:
-        return new MsgPackFormatter(rules);
-      case JSON:
-        return new JsonFormatter(rules);
-      case ELASTICSEARCH:
-        return new ElasticsearchFormatter();
-    }
+    public static Formatter getFormatter(Type type, Rules rules) {
+        switch (type) {
+            case CSV:
+                return new CsvFormatter();
+            case MESSAGE_PACK:
+                return new MsgPackFormatter(rules);
+            case JSON:
+                return new JsonFormatter(rules);
+            case ELASTICSEARCH:
+                return new ElasticsearchFormatter();
+        }
 
-    return new JsonFormatter(rules);
-  }
+        return new JsonFormatter(rules);
+    }
 }

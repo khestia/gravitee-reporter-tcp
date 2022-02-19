@@ -34,60 +34,60 @@ import org.openjdk.jmh.annotations.*;
 @Fork(value = 1)
 public class JsonFormatterBenchmark {
 
-  JsonFormatter<Reportable> jsonFormatter;
+    JsonFormatter<Reportable> jsonFormatter;
 
-  JsonFormatter<Reportable> jsonFormatterNoFilter;
-  Metrics metrics;
+    JsonFormatter<Reportable> jsonFormatterNoFilter;
+    Metrics metrics;
 
-  @Setup
-  public void setup() {
-    Rules rules = new Rules() {
-      @Override
-      public boolean containsRules() {
-        // This will force the registration of the FieldFiltering jackson filter.
-        return true;
-      }
-    };
+    @Setup
+    public void setup() {
+        Rules rules = new Rules() {
+            @Override
+            public boolean containsRules() {
+                // This will force the registration of the FieldFiltering jackson filter.
+                return true;
+            }
+        };
 
-    jsonFormatter = new JsonFormatter<>(rules);
+        jsonFormatter = new JsonFormatter<>(rules);
 
-    Rules noRules = new Rules();
-    jsonFormatterNoFilter = new JsonFormatter<>(noRules);
+        Rules noRules = new Rules();
+        jsonFormatterNoFilter = new JsonFormatter<>(noRules);
 
-    this.metrics = Metrics.on(System.currentTimeMillis()).build();
-    this.metrics.setRequestId("id");
-    this.metrics.setHttpMethod(HttpMethod.GET);
-    this.metrics.setLocalAddress("192.68.0.1");
-    this.metrics.setRemoteAddress("192.168.0.2");
-    this.metrics.setHost("host");
-    this.metrics.setUri("/my-uri");
-    this.metrics.setUserAgent("user-agent");
-    this.metrics.setApiResponseTimeMs(202);
-    this.metrics.setMessage("message");
-    this.metrics.setPath("/path");
-    this.metrics.setMappedPath("/path");
-    this.metrics.setApi(UUID.randomUUID().toString());
-    this.metrics.setPlan(UUID.randomUUID().toString());
-    this.metrics.setApplication(UUID.randomUUID().toString());
-    this.metrics.setCustomMetrics(Map.of("keyA", "value1", "keyB", "value2"));
-    this.metrics.setEndpoint("https://api.gravitee.io/echo");
-    this.metrics.setProxyLatencyMs(2);
-    this.metrics.setProxyResponseTimeMs(200);
-    this.metrics.setStatus(200);
-    this.metrics.setTransactionId(UUID.randomUUID().toString());
-    this.metrics.setRequestId(UUID.randomUUID().toString());
-    this.metrics.setRequestContentLength(0);
-    this.metrics.setResponseContentLength(600);
-    this.metrics.setSubscription(UUID.randomUUID().toString());
-  }
+        this.metrics = Metrics.on(System.currentTimeMillis()).build();
+        this.metrics.setRequestId("id");
+        this.metrics.setHttpMethod(HttpMethod.GET);
+        this.metrics.setLocalAddress("192.68.0.1");
+        this.metrics.setRemoteAddress("192.168.0.2");
+        this.metrics.setHost("host");
+        this.metrics.setUri("/my-uri");
+        this.metrics.setUserAgent("user-agent");
+        this.metrics.setApiResponseTimeMs(202);
+        this.metrics.setMessage("message");
+        this.metrics.setPath("/path");
+        this.metrics.setMappedPath("/path");
+        this.metrics.setApi(UUID.randomUUID().toString());
+        this.metrics.setPlan(UUID.randomUUID().toString());
+        this.metrics.setApplication(UUID.randomUUID().toString());
+        this.metrics.setCustomMetrics(Map.of("keyA", "value1", "keyB", "value2"));
+        this.metrics.setEndpoint("https://api.gravitee.io/echo");
+        this.metrics.setProxyLatencyMs(2);
+        this.metrics.setProxyResponseTimeMs(200);
+        this.metrics.setStatus(200);
+        this.metrics.setTransactionId(UUID.randomUUID().toString());
+        this.metrics.setRequestId(UUID.randomUUID().toString());
+        this.metrics.setRequestContentLength(0);
+        this.metrics.setResponseContentLength(600);
+        this.metrics.setSubscription(UUID.randomUUID().toString());
+    }
 
-  @Benchmark
-  public void benchWithNoJacksonFilter() {
-    jsonFormatterNoFilter.format(metrics);
-  }
+    @Benchmark
+    public void benchWithNoJacksonFilter() {
+        jsonFormatterNoFilter.format(metrics);
+    }
 
-  @Benchmark
-  public void benchWithFieldFilteringJacksonFilter() {
-    jsonFormatter.format(metrics);
-  }
+    @Benchmark
+    public void benchWithFieldFilteringJacksonFilter() {
+        jsonFormatter.format(metrics);
+    }
 }

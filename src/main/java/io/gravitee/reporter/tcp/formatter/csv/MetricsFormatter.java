@@ -26,58 +26,46 @@ import java.util.Map;
  */
 public final class MetricsFormatter extends SingleValueFormatter<Metrics> {
 
-  public Buffer format0(Metrics metrics) {
-    final Map<String, String> customMetrics = metrics.getCustomMetrics();
+    public Buffer format0(Metrics metrics) {
+        final Map<String, String> customMetrics = metrics.getCustomMetrics();
 
-    final Buffer buffer = Buffer.buffer();
+        final Buffer buffer = Buffer.buffer();
 
-    appendString(buffer, metrics.getTransactionId());
-    appendString(buffer, metrics.getRequestId());
-    appendLong(buffer, metrics.timestamp().toEpochMilli());
-    appendString(buffer, metrics.getRemoteAddress());
-    appendString(buffer, metrics.getLocalAddress());
-    appendString(buffer, metrics.getApi());
-    appendString(buffer, metrics.getApplication());
-    appendString(buffer, metrics.getPlan());
-    appendString(buffer, metrics.getSubscription());
-    appendString(buffer, metrics.getUser());
-    appendString(buffer, metrics.getTenant());
-    appendString(buffer, metrics.getUri());
-    appendString(buffer, metrics.getPath());
-    appendString(buffer, metrics.getMappedPath());
-    appendString(buffer, metrics.getHttpMethod().name());
-    appendInt(buffer, metrics.getStatus());
-    appendString(buffer, metrics.getEndpoint());
-    appendString(buffer, metrics.getErrorKey());
-    appendString(buffer, metrics.getMessage(), true, false);
-    appendString(buffer, metrics.getUserAgent(), true, false);
-    appendString(buffer, metrics.getHost());
-    appendLong(buffer, metrics.getRequestContentLength());
-    appendLong(buffer, metrics.getResponseContentLength());
-    appendLong(buffer, metrics.getApiResponseTimeMs());
-    appendLong(buffer, metrics.getProxyResponseTimeMs());
-    appendLong(buffer, metrics.getProxyLatencyMs());
-    appendString(
-      buffer,
-      metrics.getSecurityType() != null
-        ? metrics.getSecurityType().name()
-        : null
-    );
-    appendString(
-      buffer,
-      metrics.getSecurityToken() != null ? metrics.getApi() : null,
-      customMetrics.isEmpty()
-    );
+        appendString(buffer, metrics.getTransactionId());
+        appendString(buffer, metrics.getRequestId());
+        appendLong(buffer, metrics.timestamp().toEpochMilli());
+        appendString(buffer, metrics.getRemoteAddress());
+        appendString(buffer, metrics.getLocalAddress());
+        appendString(buffer, metrics.getApi());
+        appendString(buffer, metrics.getApplication());
+        appendString(buffer, metrics.getPlan());
+        appendString(buffer, metrics.getSubscription());
+        appendString(buffer, metrics.getUser());
+        appendString(buffer, metrics.getTenant());
+        appendString(buffer, metrics.getUri());
+        appendString(buffer, metrics.getPath());
+        appendString(buffer, metrics.getMappedPath());
+        appendString(buffer, metrics.getHttpMethod().name());
+        appendInt(buffer, metrics.getStatus());
+        appendString(buffer, metrics.getEndpoint());
+        appendString(buffer, metrics.getErrorKey());
+        appendString(buffer, metrics.getMessage(), true, false);
+        appendString(buffer, metrics.getUserAgent(), true, false);
+        appendString(buffer, metrics.getHost());
+        appendLong(buffer, metrics.getRequestContentLength());
+        appendLong(buffer, metrics.getResponseContentLength());
+        appendLong(buffer, metrics.getApiResponseTimeMs());
+        appendLong(buffer, metrics.getProxyResponseTimeMs());
+        appendLong(buffer, metrics.getProxyLatencyMs());
+        appendString(buffer, metrics.getSecurityType() != null ? metrics.getSecurityType().name() : null);
+        appendString(buffer, metrics.getSecurityToken() != null ? metrics.getApi() : null, customMetrics.isEmpty());
 
-    if (!customMetrics.isEmpty()) {
-      for (
-        Iterator<String> i = customMetrics.keySet().iterator();
-        i.hasNext();
-      ) {
-        appendString(buffer, customMetrics.get(i.next()), true, !i.hasNext());
-      }
+        if (!customMetrics.isEmpty()) {
+            for (Iterator<String> i = customMetrics.keySet().iterator(); i.hasNext();) {
+                appendString(buffer, customMetrics.get(i.next()), true, !i.hasNext());
+            }
+        }
+
+        return buffer;
     }
-
-    return buffer;
-  }
 }

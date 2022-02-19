@@ -42,192 +42,162 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public final class TcpReporter extends AbstractService implements Reporter {
 
-  private final Logger logger = LoggerFactory.getLogger(TcpReporter.class);
+    private final Logger logger = LoggerFactory.getLogger(TcpReporter.class);
 
-  @Autowired
-  private TcpReporterConfiguration configuration;
+    @Autowired
+    private TcpReporterConfiguration configuration;
 
-  @Autowired
-  private Vertx vertx;
+    @Autowired
+    private Vertx vertx;
 
-  private NetClient netClient;
+    private NetClient netClient;
 
-  private NetSocket netSocket;
+    private NetSocket netSocket;
 
-  private Map<Class<? extends Reportable>, Formatter> formatters = new HashMap<>(
-    4
-  );
+    private Map<Class<? extends Reportable>, Formatter> formatters = new HashMap<>(4);
 
-  private CircuitBreaker circuitBreaker;
+    private CircuitBreaker circuitBreaker;
 
-  /**
-   * {@code \u000a} linefeed LF ('\n').
-   *
-   * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
-   *      for Character and String Literals</a>
-   * @since 2.2
-   */
-  private static final char LF = '\n';
+    /**
+     * {@code \u000a} linefeed LF ('\n').
+     *
+     * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
+     *      for Character and String Literals</a>
+     * @since 2.2
+     */
+    private static final char LF = '\n';
 
-  /**
-   * {@code \u000d} carriage return CR ('\r').
-   *
-   * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
-   *      for Character and String Literals</a>
-   * @since 2.2
-   */
-  private static final char CR = '\r';
+    /**
+     * {@code \u000d} carriage return CR ('\r').
+     *
+     * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
+     *      for Character and String Literals</a>
+     * @since 2.2
+     */
+    private static final char CR = '\r';
 
-  private static final byte[] END_OF_LINE = new byte[] { CR, LF };
+    private static final byte[] END_OF_LINE = new byte[] { CR, LF };
 
-  @Override
-  public boolean canHandle(Reportable reportable) {
-    return (
-      configuration.isEnabled() && formatters.containsKey(reportable.getClass())
-    );
-  }
-
-  @Override
-  public void report(Reportable reportable) {
-    if (configuration.isEnabled()) {
-      if (netSocket != null && !netSocket.writeQueueFull()) {
-        vertx.executeBlocking(
-          (Handler<Promise<Buffer>>) event -> {
-            Buffer buffer = formatters
-              .get(reportable.getClass())
-              .format(reportable);
-            if (buffer != null) {
-              event.complete(buffer);
-            } else {
-              event.fail("Invalid data");
-            }
-          },
-          event -> {
-            if (event.succeeded() && !netSocket.writeQueueFull()) {
-              netSocket.write(event.result().appendBytes(END_OF_LINE));
-            }
-          }
-        );
-      }
+    @Override
+    public boolean canHandle(Reportable reportable) {
+        return (configuration.isEnabled() && formatters.containsKey(reportable.getClass()));
     }
-  }
 
-  @Override
-  public void doStart() throws Exception {
-    if (configuration.isEnabled()) {
-      logger.info("Starting TCP reporter...");
-
-      // Initialize reporters
-      for (MetricsType type : MetricsType.values()) {
-        Formatter formatter = FormatterFactory.getFormatter(
-          configuration.getOutputType(),
-          configuration.getRules(type)
-        );
-        applicationContext
-          .getAutowireCapableBeanFactory()
-          .autowireBean(formatter);
-
-        formatters.put(type.getClazz(), formatter);
-      }
-
-      circuitBreaker =
-        CircuitBreaker
-          .create(
-            "tcp-reporter",
-            vertx,
-            new CircuitBreakerOptions()
-              .setMaxRetries(Integer.MAX_VALUE)
-              .setTimeout(configuration.getConnectTimeout())
-          )
-          .retryPolicy(integer -> configuration.getRetryTimeout());
-
-      netClient =
-        vertx.createNetClient(
-          new NetClientOptions()
-            .setConnectTimeout(configuration.getConnectTimeout())
-            .setReconnectAttempts(configuration.getReconnectAttempts())
-            .setReconnectInterval(configuration.getReconnectInterval())
-        );
-
-      connect();
+    @Override
+    public void report(Reportable reportable) {
+        if (configuration.isEnabled()) {
+            if (netSocket != null && !netSocket.writeQueueFull()) {
+                vertx.executeBlocking(
+                    (Handler<Promise<Buffer>>) event -> {
+                        Buffer buffer = formatters.get(reportable.getClass()).format(reportable);
+                        if (buffer != null) {
+                            event.complete(buffer);
+                        } else {
+                            event.fail("Invalid data");
+                        }
+                    },
+                    event -> {
+                        if (event.succeeded() && !netSocket.writeQueueFull()) {
+                            netSocket.write(event.result().appendBytes(END_OF_LINE));
+                        }
+                    }
+                );
+            }
+        }
     }
-  }
 
-  private void connect() {
-    circuitBreaker
-      .execute(this::doConnect)
-      .onComplete(
-        event -> {
-          // The connection has been established
-          if (event.succeeded()) {
-            netSocket = event.result();
-            netSocket
-              .closeHandler(
-                event1 -> {
-                  netSocket = null;
-                  logger.info(
-                    "TCP reporter connection has been closed, trying to reconnect..."
-                  );
-                  // How to force to reconnect ?
-                  connect();
-                }
-              )
-              .exceptionHandler(
-                throwable -> {
-                  netSocket = null;
-                  logger.error(
-                    "An error occurs with the TCP reporter",
-                    throwable
-                  );
-                }
-              );
-          } else {
-            // Retry the connection
+    @Override
+    public void doStart() throws Exception {
+        if (configuration.isEnabled()) {
+            logger.info("Starting TCP reporter...");
+
+            // Initialize reporters
+            for (MetricsType type : MetricsType.values()) {
+                Formatter formatter = FormatterFactory.getFormatter(configuration.getOutputType(), configuration.getRules(type));
+                applicationContext.getAutowireCapableBeanFactory().autowireBean(formatter);
+
+                formatters.put(type.getClazz(), formatter);
+            }
+
+            circuitBreaker =
+                CircuitBreaker
+                    .create(
+                        "tcp-reporter",
+                        vertx,
+                        new CircuitBreakerOptions().setMaxRetries(Integer.MAX_VALUE).setTimeout(configuration.getConnectTimeout())
+                    )
+                    .retryPolicy(integer -> configuration.getRetryTimeout());
+
+            netClient =
+                vertx.createNetClient(
+                    new NetClientOptions()
+                        .setConnectTimeout(configuration.getConnectTimeout())
+                        .setReconnectAttempts(configuration.getReconnectAttempts())
+                        .setReconnectInterval(configuration.getReconnectInterval())
+                );
+
             connect();
-          }
         }
-      );
-  }
-
-  private void doConnect(Promise<NetSocket> netSocketPromise) {
-    netClient.connect(
-      configuration.getPort(),
-      configuration.getHost(),
-      event -> {
-        if (event.failed()) {
-          netSocketPromise.fail(event.cause());
-          logger.error(
-            "An error occurs while trying to connect TCP reporter to {}:{}",
-            configuration.getHost(),
-            configuration.getPort(),
-            event.cause()
-          );
-        } else {
-          netSocketPromise.complete(event.result());
-          logger.info(
-            "TCP reporter connected to {}:{}",
-            configuration.getHost(),
-            configuration.getPort()
-          );
-        }
-      }
-    );
-  }
-
-  @Override
-  protected void doStop() throws Exception {
-    if (configuration.isEnabled() && netClient != null) {
-      logger.info("Stopping TCP reporter...");
-
-      if (netSocket != null) {
-        netSocket.close(
-          event -> logger.info("TCP reporter socket closed successfully")
-        );
-      }
-
-      netClient.close();
-
-      logger.info("Stopping TCP reporter... DONE");
     }
-  }
+
+    private void connect() {
+        circuitBreaker
+            .execute(this::doConnect)
+            .onComplete(event -> {
+                // The connection has been established
+                if (event.succeeded()) {
+                    netSocket = event.result();
+                    netSocket
+                        .closeHandler(event1 -> {
+                            netSocket = null;
+                            logger.info("TCP reporter connection has been closed, trying to reconnect...");
+                            // How to force to reconnect ?
+                            connect();
+                        })
+                        .exceptionHandler(throwable -> {
+                            netSocket = null;
+                            logger.error("An error occurs with the TCP reporter", throwable);
+                        });
+                } else {
+                    // Retry the connection
+                    connect();
+                }
+            });
+    }
+
+    private void doConnect(Promise<NetSocket> netSocketPromise) {
+        netClient.connect(
+            configuration.getPort(),
+            configuration.getHost(),
+            event -> {
+                if (event.failed()) {
+                    netSocketPromise.fail(event.cause());
+                    logger.error(
+                        "An error occurs while trying to connect TCP reporter to {}:{}",
+                        configuration.getHost(),
+                        configuration.getPort(),
+                        event.cause()
+                    );
+                } else {
+                    netSocketPromise.complete(event.result());
+                    logger.info("TCP reporter connected to {}:{}", configuration.getHost(), configuration.getPort());
+                }
+            }
+        );
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (configuration.isEnabled() && netClient != null) {
+            logger.info("Stopping TCP reporter...");
+
+            if (netSocket != null) {
+                netSocket.close(event -> logger.info("TCP reporter socket closed successfully"));
+            }
+
+            netClient.close();
+
+            logger.info("Stopping TCP reporter... DONE");
+        }
+    }
 }

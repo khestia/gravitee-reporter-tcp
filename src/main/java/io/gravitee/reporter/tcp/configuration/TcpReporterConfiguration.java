@@ -31,123 +31,109 @@ import org.springframework.core.env.ConfigurableEnvironment;
  */
 public class TcpReporterConfiguration {
 
-  private static final String TCP_REPORTER_PREFIX = "reporters.tcp.";
+    private static final String TCP_REPORTER_PREFIX = "reporters.tcp.";
 
-  @Value("${reporters.tcp.output:json}")
-  private String outputType;
+    @Value("${reporters.tcp.output:json}")
+    private String outputType;
 
-  @Value("${reporters.tcp.enabled:false}")
-  private boolean enabled;
+    @Value("${reporters.tcp.enabled:false}")
+    private boolean enabled;
 
-  @Value("${reporters.tcp.host:localhost}")
-  private String host;
+    @Value("${reporters.tcp.host:localhost}")
+    private String host;
 
-  @Value("${reporters.tcp.port:8123}")
-  private int port;
+    @Value("${reporters.tcp.port:8123}")
+    private int port;
 
-  @Value("${reporters.tcp.connectTimeout:10000}")
-  private int connectTimeout;
+    @Value("${reporters.tcp.connectTimeout:10000}")
+    private int connectTimeout;
 
-  @Value("${reporters.tcp.retryTimeout:5000}")
-  private long retryTimeout;
+    @Value("${reporters.tcp.retryTimeout:5000}")
+    private long retryTimeout;
 
-  @Value("${reporters.tcp.reconnectAttempts:10}")
-  private int reconnectAttempts;
+    @Value("${reporters.tcp.reconnectAttempts:10}")
+    private int reconnectAttempts;
 
-  @Value("${reporters.tcp.reconnectInterval:500}")
-  private long reconnectInterval;
+    @Value("${reporters.tcp.reconnectInterval:500}")
+    private long reconnectInterval;
 
-  @Autowired
-  private ConfigurableEnvironment environment;
+    @Autowired
+    private ConfigurableEnvironment environment;
 
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public Type getOutputType() {
-    return outputType == null
-      ? Type.JSON
-      : Type.valueOf(outputType.toUpperCase());
-  }
-
-  public String getHost() {
-    return host;
-  }
-
-  public int getPort() {
-    return port;
-  }
-
-  public int getConnectTimeout() {
-    return connectTimeout;
-  }
-
-  public long getRetryTimeout() {
-    return retryTimeout;
-  }
-
-  public int getReconnectAttempts() {
-    return reconnectAttempts;
-  }
-
-  public long getReconnectInterval() {
-    return reconnectInterval;
-  }
-
-  public Rules getRules(MetricsType type) {
-    Rules rules = new Rules();
-
-    rules.setRenameFields(
-      getMapProperties(TCP_REPORTER_PREFIX + type.getType() + ".rename")
-    );
-    rules.setExcludeFields(
-      getArrayProperties(TCP_REPORTER_PREFIX + type.getType() + ".exclude")
-    );
-    rules.setIncludeFields(
-      getArrayProperties(TCP_REPORTER_PREFIX + type.getType() + ".include")
-    );
-
-    return rules;
-  }
-
-  private Map<String, String> getMapProperties(String prefix) {
-    Map<String, Object> properties = EnvironmentUtils.getPropertiesStartingWith(
-      environment,
-      prefix
-    );
-    if (!properties.isEmpty()) {
-      return properties
-        .entrySet()
-        .stream()
-        .collect(
-          Collectors.toMap(
-            entry ->
-              entry
-                .getKey()
-                .substring(EnvironmentUtils.encodedKey(prefix).length() + 1),
-            entry -> entry.getValue().toString()
-          )
-        );
-    } else {
-      return Collections.emptyMap();
-    }
-  }
-
-  private Set<String> getArrayProperties(String prefix) {
-    final Set<String> properties = new HashSet<>();
-
-    boolean found = true;
-    int idx = 0;
-
-    while (found) {
-      String property = environment.getProperty(prefix + '[' + idx++ + ']');
-      found = (property != null && !property.isEmpty());
-
-      if (found) {
-        properties.add(property);
-      }
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    return properties;
-  }
+    public Type getOutputType() {
+        return outputType == null ? Type.JSON : Type.valueOf(outputType.toUpperCase());
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public long getRetryTimeout() {
+        return retryTimeout;
+    }
+
+    public int getReconnectAttempts() {
+        return reconnectAttempts;
+    }
+
+    public long getReconnectInterval() {
+        return reconnectInterval;
+    }
+
+    public Rules getRules(MetricsType type) {
+        Rules rules = new Rules();
+
+        rules.setRenameFields(getMapProperties(TCP_REPORTER_PREFIX + type.getType() + ".rename"));
+        rules.setExcludeFields(getArrayProperties(TCP_REPORTER_PREFIX + type.getType() + ".exclude"));
+        rules.setIncludeFields(getArrayProperties(TCP_REPORTER_PREFIX + type.getType() + ".include"));
+
+        return rules;
+    }
+
+    private Map<String, String> getMapProperties(String prefix) {
+        Map<String, Object> properties = EnvironmentUtils.getPropertiesStartingWith(environment, prefix);
+        if (!properties.isEmpty()) {
+            return properties
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().substring(EnvironmentUtils.encodedKey(prefix).length() + 1),
+                        entry -> entry.getValue().toString()
+                    )
+                );
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    private Set<String> getArrayProperties(String prefix) {
+        final Set<String> properties = new HashSet<>();
+
+        boolean found = true;
+        int idx = 0;
+
+        while (found) {
+            String property = environment.getProperty(prefix + '[' + idx++ + ']');
+            found = (property != null && !property.isEmpty());
+
+            if (found) {
+                properties.add(property);
+            }
+        }
+
+        return properties;
+    }
 }

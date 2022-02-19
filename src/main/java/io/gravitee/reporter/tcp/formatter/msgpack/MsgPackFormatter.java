@@ -34,30 +34,27 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
-public class MsgPackFormatter<T extends Reportable>
-  extends AbstractFormatter<T> {
+public class MsgPackFormatter<T extends Reportable> extends AbstractFormatter<T> {
 
-  private final ObjectMapper mapper = new ObjectMapper(
-    new MessagePackFactory()
-  );
+    private final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
 
-  public MsgPackFormatter(final Rules rules) {
-    mapper.addMixIn(Reportable.class, FieldFilterMixin.class);
-    mapper.addMixIn(Request.class, FieldFilterMixin.class);
-    mapper.addMixIn(Response.class, FieldFilterMixin.class);
-    mapper.addMixIn(EndpointStatus.class, FieldFilterMixin.class);
-    mapper.addMixIn(Step.class, FieldFilterMixin.class);
-    mapper.setFilterProvider(new FieldFilterProvider(rules));
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-  }
-
-  @Override
-  public Buffer format0(T data) {
-    try {
-      return Buffer.buffer(mapper.writeValueAsBytes(data));
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-      return null;
+    public MsgPackFormatter(final Rules rules) {
+        mapper.addMixIn(Reportable.class, FieldFilterMixin.class);
+        mapper.addMixIn(Request.class, FieldFilterMixin.class);
+        mapper.addMixIn(Response.class, FieldFilterMixin.class);
+        mapper.addMixIn(EndpointStatus.class, FieldFilterMixin.class);
+        mapper.addMixIn(Step.class, FieldFilterMixin.class);
+        mapper.setFilterProvider(new FieldFilterProvider(rules));
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
-  }
+
+    @Override
+    public Buffer format0(T data) {
+        try {
+            return Buffer.buffer(mapper.writeValueAsBytes(data));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
