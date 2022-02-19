@@ -1,12 +1,12 @@
-[![Build Status](https://ci.gravitee.io/buildStatus/icon?job=gravitee-io/gravitee-reporter-tcp)](https://ci.gravitee.io/job/gravitee-io/job/gravitee-reporter-tcp/job/master/)
+= Gravitee TCP Reporter
 
-# gravitee-reporter-tcp
+ifdef::env-github[]
+endif::[]
 
+== Presentation
 Report GraviteeIO Gateway events to TCP listening server.
 
-
-## Build
-
+== Build
 This plugin require :  
 
 * Maven 3
@@ -14,25 +14,25 @@ This plugin require :
 
 Once built, a plugin archive file is generated in : target/gravitee-reporter-tcp-1.0.0-SNAPSHOT.zip
 
-
-## Deploy
-
+== Deploy
 Just unzip the plugin archive in your gravitee plugin workspace ( default is : ${node.home}/plugins )
 
-
-## Configuration 
-
+== Configuration
 The configuration is loaded from the common GraviteeIO Gateway configuration file (gravitee.yml)
 
-```YAML
+[source,YAML]
+----
 reporters:
   tcp:
-```
+----
 
-## Test locally
+== Test locally
 
 You can deploy the reporter and run the following command in your terminal (assuming you are using the default configuration) to display the GraviteeIO Gateway events:
 
-`nc -4 -k -l -v localhost 8123`
+[source]
+----
+nc -4 -k -l -v localhost 8123
+----
 
 
