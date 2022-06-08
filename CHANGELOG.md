@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/gravitee-io/gravitee-reporter-tcp/compare/1.4.1...1.4.2) (2022-06-08)
+
+
+### Bug Fixes
+
+* use HttpHeadersSerializer to serialize HttpHeaders ([1cf9d3c](https://github.com/gravitee-io/gravitee-reporter-tcp/commit/1cf9d3ca863ac1c3e6ff5eb3c3f2fe93446b3fd7))
+
 ## [1.4.1](https://github.com/gravitee-io/gravitee-reporter-tcp/compare/1.4.0...1.4.1) (2022-05-12)
 
 
