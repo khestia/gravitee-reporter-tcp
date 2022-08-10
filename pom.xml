@@ -30,7 +30,7 @@
     <name>Gravitee.io APIM - Reporter - TCP</name>
     <groupId>io.gravitee.reporter</groupId>
     <artifactId>gravitee-reporter-tcp</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4</version>
 
     <properties>
         <gravitee-bom.version>2.5</gravitee-bom.version>

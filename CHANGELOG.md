@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/gravitee-io/gravitee-reporter-tcp/compare/1.4.3...1.4.4) (2022-08-10)
+
+
+### Bug Fixes
+
+* filter headers according to exclude/include Rules ([b4f9567](https://github.com/gravitee-io/gravitee-reporter-tcp/commit/b4f9567ce0e3785f9aee699e03a0a97144cbc410))
+
 ## [1.4.3](https://github.com/gravitee-io/gravitee-reporter-tcp/compare/1.4.2...1.4.3) (2022-07-01)
 
 
